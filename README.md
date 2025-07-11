@@ -5,3 +5,4 @@ Replication of the LSAC-APP algorithm from the paper "Safe Reinforcement Learnin
 - **Simulator**: MuJoCo (via gymnasium)
 - **RL Algorithm**: Soft Actor-Critic (SAC) with risk-sensitive reward and Lyapunov critic
 - **Environment**: Differential-drive robot with sparse LiDAR observations in a 2D obstacle world
+- **Environment**: Differential-drive robot with sparse LiDAR observations in a 2D obstacle world
