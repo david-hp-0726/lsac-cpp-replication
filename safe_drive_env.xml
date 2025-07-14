@@ -9,7 +9,7 @@
     </asset>
     <default>
         <default class="wheel">
-            <geom type="cylinder" size=".06 .03" rgba=".5 .5 1 1" friction="5 0.1 0.1"/>
+            <geom type="cylinder" size=".06 .03" rgba=".5 .5 1 1" friction="5 0.1 0.1" />
         </default>
     </default>
     <worldbody>
@@ -25,26 +25,27 @@
         <geom name="brick2" type="box" size="0.35 0.25 0.25" pos="1 -2.5 0.15" quat="0.1 0 0 1" rgba="0.8 0.2 0.2 1"/>
         <geom name="brick3" type="box" size="0.35 0.25 0.25" pos="-1 -0.5 0.15" quat="-0.2 0 0 1" rgba="0.8 0.2 0.2 1"/>
         <geom name="brick4" type="box" size="0.35 0.25 0.25" pos="-2 2.5 0.15" quat="0.6 0 0 1" rgba="0.8 0.2 0.2 1"/>
+        <site name="target_site" pos="6 0 0.2" size="0.15 0.05" rgba="0 0 1 1" type="cylinder"/>
         <!-- Random Obstacles -->
-        <body name="rand_box1" pos="2 -1 0.15">
-            <geom name="rand_box1_geom" type="box" size="0.5 0.5 0.25" rgba="1 1 1 1"
+        <body name="rand_box1_body" pos="2 -1 0.15">
+            <geom name="rand_box1" type="box" size="0.5 0.5 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
-        <body name="rand_box2" pos="4 2 0.15">
-            <geom name="rand_box2_geom" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
+        <body name="rand_box2_body" pos="4 2 0.15">
+            <geom name="rand_box2" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1"
           solref="0.02 1" solimp="0.9 0.95 0.001" quat="1 0 0 1"/>
         </body>
-        <body name="rand_box3" pos="-2 -2.5 0.15">
-            <geom name="rand_box3_geom" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
+        <body name="rand_box3_body" pos="-2 -2.5 0.15">
+            <geom name="rand_box3" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
         <!-- Car -->
         <body name="car" pos="-5 0 0.12">
             <freejoint />
-            <geom name="chassis" type="box" size="0.25 0.2 0.06" rgba="0.5 0.5 0.5 1" pos="0 0 0.18"/>
+            <geom name="chassis" type="box" size="0.25 0.2 0.06" rgba="0.5 0.5 0.5 1" pos="0 0 0.18"  mass="17"/>
             <body name="front_left_wheel" pos="0.19 0.17 0.06" zaxis="0 1 0">
                 <geom class="wheel"/>
                 <joint name="front_left" type="hinge" axis="0 0 1" />
@@ -71,10 +72,10 @@
             <joint joint="back_right" coef="1" />
         </fixed>
         <fixed name="turn">
-            <joint joint="front_left" coef="-1.5" />
-            <joint joint="front_right" coef="1.5" />
-            <joint joint="back_left" coef="-1.5" />
-            <joint joint="back_right" coef="1.5" />
+            <joint joint="front_left" coef="-2" />
+            <joint joint="front_right" coef="2" />
+            <joint joint="back_left" coef="-2" />
+            <joint joint="back_right" coef="2" />
         </fixed>
     </tendon>
     <actuator>
