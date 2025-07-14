@@ -9,7 +9,10 @@
     </asset>
     <default>
         <default class="wheel">
-            <geom type="cylinder" size=".06 .03" rgba=".5 .5 1 1" friction="5 0.1 0.1" />
+            <geom type="cylinder" size=".01 .01" rgba=".5 .5 1 1" friction="5 0.1 0.1" />
+        </default>
+        <default class="rangefinder">
+            <site type="capsule" size=".005 .1"/>
         </default>
     </default>
     <worldbody>
@@ -17,33 +20,53 @@
         <geom name="floor" type="plane" size="8 5 0.1" rgba="0.4 0.8 0.4 1" material="field_mat" />
         <!-- The left wall is centered at z=0.1, so it's z position ranges from z=0 to z=0.2 -->
         <!-- The left wall is 0.2 m in length, 8.2 m in width, 0.2 m in height -->
-        <geom name="wall_left" type="box" size="0.1 4.1 0.1" rgba="0.6 0.6 0.6 1" pos="-7.6 0 0.1" />
-        <geom name="wall_right" type="box" size="0.1 4.1 0.1" rgba="0.6 0.6 0.6 1" pos="7.6 0 0.1" />
-        <geom name="wall_bottom" type="box" size="7.5 0.1 0.1" rgba="0.6 0.6 0.6 1" pos="0 -4.1 0.1" />
-        <geom name="wall_top" type="box" size="7.5 0.1 0.1" rgba="0.6 0.6 0.6 1" pos="0 4.1 0.1" />
-        <geom name="brick1" type="box" size="0.35 0.25 0.25" pos="2 1.5 0.15" quat="0.5 0 0 1" rgba="0.8 0.2 0.2 1"/>
-        <geom name="brick2" type="box" size="0.35 0.25 0.25" pos="1 -2.5 0.15" quat="0.1 0 0 1" rgba="0.8 0.2 0.2 1"/>
-        <geom name="brick3" type="box" size="0.35 0.25 0.25" pos="-1 -0.5 0.15" quat="-0.2 0 0 1" rgba="0.8 0.2 0.2 1"/>
-        <geom name="brick4" type="box" size="0.35 0.25 0.25" pos="-2 2.5 0.15" quat="0.6 0 0 1" rgba="0.8 0.2 0.2 1"/>
+        <geom name="wall_left" type="box" size="0.1 4.2 0.3" rgba="0.6 0.6 0.6 1" pos="-7.6 0 0.3" />
+        <geom name="wall_right" type="box" size="0.1 4.2 0.3" rgba="0.6 0.6 0.6 1" pos="7.6 0 0.3" />
+        <geom name="wall_bottom" type="box" size="7.5 0.1 0.3" rgba="0.6 0.6 0.6 1" pos="0 -4.1 0.3" />
+        <geom name="wall_top" type="box" size="7.5 0.1 0.3" rgba="0.6 0.6 0.6 1" pos="0 4.1 0.3" />
+        <geom name="brick1" type="box" size="0.35 0.25 0.25" pos="2 1.5 0.25" quat="0.5 0 0 1" rgba="0.8 0.2 0.2 1" contype="1" conaffinity="1" mass="100" />
+        <geom name="brick2" type="box" size="0.35 0.25 0.25" pos="1 -2.5 0.25" quat="0.1 0 0 1" rgba="0.8 0.2 0.2 1" contype="1" conaffinity="1" mass="100"/>
+        <geom name="brick3" type="box" size="0.35 0.25 0.25" pos="-1 -0.5 0.25" quat="-0.2 0 0 1" rgba="0.8 0.2 0.2 1" contype="1" conaffinity="1" mass="100"/>
+        <geom name="brick4" type="box" size="0.35 0.25 0.25" pos="-2 2.5 0.25" quat="0.6 0 0 1" rgba="0.8 0.2 0.2 1" contype="1" conaffinity="1" mass="100"/>
         <site name="target_site" pos="6 0 0.2" size="0.15 0.05" rgba="0 0 1 1" type="cylinder"/>
         <!-- Random Obstacles -->
-        <body name="rand_box1_body" pos="2 -1 0.15">
+        <body name="rand_box1_body" pos="2 -1 0.25">
             <geom name="rand_box1" type="box" size="0.5 0.5 0.25" rgba="1 1 1 1"
-          contype="1" conaffinity="1"
+          contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
-        <body name="rand_box2_body" pos="4 2 0.15">
+        <body name="rand_box2_body" pos="4 2 0.25">
             <geom name="rand_box2" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
-          contype="1" conaffinity="1"
+          contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001" quat="1 0 0 1"/>
         </body>
-        <body name="rand_box3_body" pos="-2 -2.5 0.15">
+        <body name="rand_box3_body" pos="-2 -2.5 0.25">
             <geom name="rand_box3" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
-          contype="1" conaffinity="1"
+          contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
         <!-- Car -->
-        <body name="car" pos="-5 0 0.12">
+        <body name="car" pos="-5 -2 0.12">
+            <site name="rf_1"  class="rangefinder" fromto="0 0 0.24 0.0707  -0.0707  0.24"/>
+            <site name="rf_2"  class="rangefinder" fromto="0 0 0.24 0.259   -0.966    0.24"/>
+            <site name="rf_3"  class="rangefinder" fromto="0 0 0.24 -0.259   -0.966  0.24"/>
+            <site name="rf_4"  class="rangefinder" fromto="0 0 0.24 -0.707 -0.707    0.24"/>
+            <site name="rf_5"  class="rangefinder" fromto="0 0 0.24 -0.966 -0.259  0.24"/>
+            <site name="rf_6"  class="rangefinder" fromto="0 0 0.24 -0.966 0.259  0.24"/>
+            <site name="rf_7"  class="rangefinder" fromto="0 0 0.24  -0.707 0.707  0.24"/>
+            <site name="rf_8"  class="rangefinder" fromto="0 0 0.24  -0.259 0.966  0.24"/>
+            <site name="rf_9"  class="rangefinder" fromto="0 0 0.24  0.259 0.966 0.24"/>
+            <site name="rf_10" class="rangefinder" fromto="0 0 0.24  0.707 0.707 0.24"/>
+            <!-- <site name="rf_1" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_2" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_3" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_4" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_5" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_6" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_7" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_8" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_9" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/>
+            <site name="rf_10" class="rangefinder" fromto=".41 -.02  .11 .34 0 .115"/> -->
             <freejoint />
             <geom name="chassis" type="box" size="0.25 0.2 0.06" rgba="0.5 0.5 0.5 1" pos="0 0 0.18"  mass="17"/>
             <body name="front_left_wheel" pos="0.19 0.17 0.06" zaxis="0 1 0">
@@ -82,4 +105,16 @@
         <motor name="forward" tendon="forward" ctrlrange="-1 1" />
         <motor name="turn" tendon="turn" ctrlrange="-1 1" />
     </actuator>
+    <sensor>
+        <rangefinder name="rf_1" site="rf_1" />
+        <rangefinder name="rf_2" site="rf_2" />
+        <rangefinder name="rf_3" site="rf_3" />
+        <rangefinder name="rf_4" site="rf_4" />
+        <rangefinder name="rf_5" site="rf_5" />
+        <rangefinder name="rf_6" site="rf_6" />
+        <rangefinder name="rf_7" site="rf_7" />
+        <rangefinder name="rf_8" site="rf_8" />
+        <rangefinder name="rf_9" site="rf_9" />
+        <rangefinder name="rf_10" site="rf_10" />
+    </sensor>
 </mujoco>
