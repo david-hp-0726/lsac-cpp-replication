@@ -2,12 +2,12 @@ import numpy as np
 
 class ActionSampler:
     def __init__(self,
-                 fwd_range=(-0.25, 1.0),
+                 fwd_range=(-0.2, 1.0),
                  turn_range=(-1.0, 1.0),
                  drift_interval=100,
                  drift_strength=0.6,
-                 fwd_momentum=0.8,
-                 turn_momentum=0.85,
+                 fwd_momentum=0.85,
+                 turn_momentum=0.75,
                  fwd_noise_scale=0.2,
                  turn_noise_scale=0.2):
         self.fwd_range = fwd_range

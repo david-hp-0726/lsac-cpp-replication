@@ -27,7 +27,7 @@ class DataCollector:
             if i == 0:
                 obs_buffer[0] = np.concatenate([obs_buffer[0], [0, 0]])
             else:
-                obs_buffer[i] = np.concatenate([obs_buffer[i], obs_buffer[i-1][-4:-2]])
+                obs_buffer[i] = np.concatenate([obs_buffer[i], obs_buffer[i-1][-4:-2]]) # extend with previous action
 
             
             if self.env.collided():
