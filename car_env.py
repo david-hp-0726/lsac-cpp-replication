@@ -10,6 +10,7 @@ class CarEnv:
         self.brick_names = ['brick1', 'brick2', 'brick3']
         self.box_names = ['rand_box1', 'rand_box2', 'rand_box3']
         self.wall_names = ['wall_left', 'wall_right', 'wall_bottom', 'wall_top']
+        self.prev_action = [0, 0]
     
 
     def randomize_boxes(self):
@@ -33,12 +34,16 @@ class CarEnv:
     def step(self, action):
         self.data.ctrl = action
         mujoco.mj_step(self.model, self.data)
+        if self.viewer is not None:
+            self.viewer.sync()
     
     def get_observation(self):
         rf_ids = [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SENSOR, f"rf_{i}") for i in range(1, 11)]
         rf = [self.data.sensordata[rf_id] for rf_id in rf_ids]
         linear_vel = np.linalg.norm(self.data.qvel[:2])
         angular_vel = self.data.qvel[5]
+        # prev_action_copy = self.prev_action.copy() 
+        # self.prev_action = [linear_vel, angular_vel] 
         return np.concatenate([rf, [linear_vel, angular_vel]])
 
     def collided(self):

@@ -2,7 +2,7 @@ import numpy as np
 
 class ActionSampler:
     def __init__(self,
-                 fwd_range=(0.4, 1.0),
+                 fwd_range=(-0.25, 1.0),
                  turn_range=(-1.0, 1.0),
                  drift_interval=100,
                  drift_strength=0.6,
