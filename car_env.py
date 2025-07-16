@@ -39,9 +39,10 @@ class CarEnv:
         mujoco.mj_step(self.model, self.data)
         self.prev_vels = self.curr_vels.copy() 
         self.curr_vels = [np.linalg.norm(self.data.qvel[:2]), self.data.qvel[5]]
-        print(f'past: {self.prev_vels}')
-        print(f'curr: {self.curr_vels}')
-        time.sleep(1)
+        # print(f'past: {self.prev_vels}')
+        # print(f'curr: {self.curr_vels}')
+        # print(f'relative pos: [{self.relative_position()[0]:2f}, {self.relative_position()[1]:2f}')
+        # time.sleep(0.02)
         if self.viewer is not None:
             self.viewer.sync()
     
@@ -69,7 +70,7 @@ class CarEnv:
     def launch_viewer(self):
         self.viewer = mujoco.viewer.launch_passive(self.model, self.data)
     
-    def distance_to_target(self):
+    def relative_position(self):
         # Returns [dx, dy]
         target_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "target_site")
         car_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "car")
@@ -79,14 +80,14 @@ class CarEnv:
         return car_pos - target_pos
 
     def done(self):
-        return self.collided() or np.linalg.norm(self.distance_to_target()) <= 0.25
+        return self.collided() or np.linalg.norm(self.relative_position()) <= 0.3
     
     def get_state(self):
         # Returns 14D vector including 10D rangefinding, 2D previous velocities, and 2D distance from target
         rf_ids = [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SENSOR, f"rf_{i}") for i in range(1, 11)]
-        rfs = [self.data.sensor_data[rf_id] for rf_id in rf_ids]
+        rfs = [self.data.sensordata[rf_id] for rf_id in rf_ids]
         linear_vel = np.linalg.norm(self.data.qvel[:2])
         angular_vel = self.data.qvel[5]
-        distance = self.distance_to_target()
-        return np.concatenate([rfs, [linear_vel, angular_vel], distance])
+        relative_pos = self.relative_position()
+        return np.concatenate([rfs, [linear_vel, angular_vel], relative_pos])
         
