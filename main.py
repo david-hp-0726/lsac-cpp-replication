@@ -10,7 +10,7 @@ import torch
 
 model = mujoco.MjModel.from_xml_path('safe_drive_env.xml')
 data = mujoco.MjData(model)
-brick_names = ['brick1', 'brick2', 'brick3']
+brick_names = ['brick1', 'brick2', 'brick3', 'brick4']
 box_names = ['rand_box1', 'rand_box2', 'rand_box3']
 wall_names = ['wall_left', 'wall_right', 'wall_bottom', 'wall_top']
 
@@ -24,7 +24,6 @@ def simulate(log_prob=False):
         model = CollisionPredictor()
         model.load_state_dict(torch.load("model/best_collision_predictor.pth"))
         model.eval()
-        prev_action = [0, 0]
 
     for i in range(2000):
         action = sampler.sample()
@@ -32,18 +31,15 @@ def simulate(log_prob=False):
 
         if log_prob and i % 5 == 0:
             obs = car_env.get_observation()
-            obs = np.concatenate([obs, prev_action])
             obs_tensor = torch.tensor(obs, dtype=torch.float32).unsqueeze(0)
-            prev_action = obs[-4:-2]
 
             with torch.no_grad():
                 logits = model(obs_tensor)
                 prob = torch.sigmoid(logits).item()
             print(f"[Prediction] Collision probability: {prob:.4f}")
 
-
         time.sleep(0.02)
-        if car_env.collided():
+        if car_env.done():
             break
 
 def generate_dataset(dataset_size=100000):
@@ -69,8 +65,8 @@ def generate_dataset(dataset_size=100000):
     np.save('data/Y.npy', Y)
 
 def main():
-    generate_dataset(dataset_size=272000)
-    # simulate(log_prob=True)
+    # generate_dataset(dataset_size=272000)
+    simulate(log_prob=True)
 
 if __name__ == '__main__':
     main()
