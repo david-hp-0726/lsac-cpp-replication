@@ -69,8 +69,8 @@ def generate_dataset(dataset_size=100000):
     np.save('data/Y.npy', Y)
 
 def main():
-    # generate_dataset(dataset_size=272000)
-    simulate(log_prob=True)
+    generate_dataset(dataset_size=272000)
+    # simulate(log_prob=True)
 
 if __name__ == '__main__':
     main()
