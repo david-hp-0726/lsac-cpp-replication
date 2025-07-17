@@ -14,7 +14,7 @@ GAMMA = 0.99
 TAU = 0.005
 ACTOR_LR = 1e-4
 CRITIC_LR = 2e-4
-ALPHA = 0.2
+ALPHA = 0.05
 BATCH_SIZE = 256
 REPLAY_SIZE = int(1e6)
 MAX_EPISODES = 10000
@@ -44,12 +44,9 @@ critic1_opt = torch.optim.Adam(critic1.parameters(), lr=CRITIC_LR)
 critic2_opt = torch.optim.Adam(critic2.parameters(), lr=CRITIC_LR)
 
 def select_action(state):
-    state = torch.FloatTensor(state).unsqueeze(0)
-    mean, log_std = actor(state)
-    std = log_std.exp()
-    dist = Normal(mean, std)
-    action = dist.sample()
-    return action[0].cpu().detach().numpy()
+    state = torch.FloatTensor(state.reshape(1, -1))
+    action, _ = actor.sample(state)
+    return action.detach().cpu().numpy()[0]
 
 def compute_critic_loss(state, action, reward, next_state, done):
     with torch.no_grad():
@@ -78,7 +75,7 @@ def compute_reward(state, next_state, risk, env, speed, log_reward=False):
     prev_dist = np.linalg.norm(rel_pos)
     curr_dist = np.linalg.norm(next_rel_pos)
 
-    progress = (prev_dist - curr_dist) * 40
+    progress = (prev_dist - curr_dist) * 20
     arrive_bonus = 50 if curr_dist < 0.5 else 0.0
     crash_penalty = -10.0 if env.collided() else 0.0
     speed_penalty = min(0, 0.8-speed) * 2
@@ -97,14 +94,14 @@ total_episode_return = 0
 pretrain_steps = 0
 for ep in range(MAX_EPISODES):
     ### 
-    if ep % 200 == 0:
-        env.launch_viewer()
-    if ep % 200 == 1:
-        env.close_viewer()
+    # if ep % 200 == 0:
+    #     env.launch_viewer()
+    # if ep % 200 == 1:
+    #     env.close_viewer()
     ###
 
     env.reset(easy_mode=False) ###
-    state = env.get_observation()
+    state = env.get_state()
     episode_reward = 0
 
     action_sampler = ActionSampler(turn_momentum=0.5, drift_strength=0.2) ###
@@ -127,9 +124,9 @@ for ep in range(MAX_EPISODES):
             logits = f_phi(torch.FloatTensor(obs).unsqueeze(0))
             risk = torch.sigmoid(logits).item()
 
-        speed = np.linalg.norm(next_state[-4:-2])
-        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
-        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env)
+        speed = np.abs(next_state[-4])
+        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
+        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed)
         replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
         total_episode_return += reward
