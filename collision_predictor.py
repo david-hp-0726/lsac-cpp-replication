@@ -6,6 +6,16 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import recall_score, f1_score
 import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.rcParams.update({
+    "font.family": "serif",
+    "axes.titlesize": 14,
+    "axes.labelsize": 12,
+    "legend.fontsize": 11,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11
+})
 
 def load_data():  
     X = np.load("data/X.npy")
@@ -116,28 +126,35 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, 
 
     print(f"Best Val Loss: {best_loss:.4f} | Best Recall: {best_recall:.4f} | Best F1: {best_f1:.4f}")
 
-    # --- Plot training curves ---
+    # --- Plot 1: Loss ---
     epochs = range(1, len(history["train_loss"]) + 1)
 
-    plt.figure()
-    plt.plot(epochs, history["train_loss"], label="Train Loss")
-    plt.plot(epochs, history["val_loss"], label="Val Loss")
-    plt.title("Loss vs. Epoch")
+    plt.figure(figsize=(6, 4))
+    plt.plot(epochs, history["train_loss"], label="Train Loss", linewidth=2)
+    plt.plot(epochs, history["val_loss"], label="Validation Loss", linewidth=2, linestyle="--")
     plt.xlabel("Epoch")
-    plt.ylabel("BCE Loss")
+    plt.ylabel("Binary Cross-Entropy Loss")
+    plt.title("Training and Validation Loss")
     plt.legend()
-    plt.savefig("graph/loss_curve.png")
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    plt.savefig("graph/loss_curve.png", dpi=300)
     plt.close()
 
-    plt.figure()
-    plt.plot(epochs, history["recall"], label="Recall")
-    plt.plot(epochs, history["f1"], label="F1 Score")
-    plt.title("Recall & F1 vs. Epoch")
+    # --- Plot 2: Recall & F1 ---
+    plt.figure(figsize=(6, 4))
+    plt.plot(epochs, history["recall"], label="Recall", linewidth=2)
+    plt.plot(epochs, history["f1"], label="F1 Score", linewidth=2, linestyle="--")
     plt.xlabel("Epoch")
     plt.ylabel("Score")
+    plt.title("Validation Recall and F1 Score")
+    plt.ylim(0, 1.05)
     plt.legend()
-    plt.savefig("graph/recall_f1_curve.png")
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    plt.savefig("graph/recall_f1_curve.png", dpi=300)
     plt.close()
+
 
 
 def main():
