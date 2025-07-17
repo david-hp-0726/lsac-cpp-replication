@@ -32,17 +32,17 @@
         <!-- <site name="target_site" pos="-4 0 0" size="0.1 0.05" rgba="0 0 1 1" type="cylinder"/> -->
         <!-- Random Obstacles -->
         <body name="rand_box1_body" pos="2 -1 0.25">
-            <geom name="rand_box1" type="box" size="0.5 0.5 0.25" rgba="1 1 1 1"
+            <geom name="rand_box1" type="box" size="0.4 0.4 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
         <body name="rand_box2_body" pos="4 2 0.25">
-            <geom name="rand_box2" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
+            <geom name="rand_box2" type="box" size="0.3 0.25 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001" quat="0.3 0 0 1"/>
         </body>
         <body name="rand_box3_body" pos="-2 -2.5 0.25">
-            <geom name="rand_box3" type="box" size="0.4 0.3 0.25" rgba="1 1 1 1"
+            <geom name="rand_box3" type="box" size="0.3 0.25 0.25" rgba="1 1 1 1"
           contype="1" conaffinity="1" mass="100"
           solref="0.02 1" solimp="0.9 0.95 0.001"/>
         </body>
@@ -80,16 +80,16 @@
     </worldbody>
     <tendon>
         <fixed name="forward">
-            <joint joint="front_left" coef="1" />
-            <joint joint="front_right" coef="1" />
-            <joint joint="back_left" coef="1" />
-            <joint joint="back_right" coef="1" />
+            <joint joint="front_left" coef="0.5" />
+            <joint joint="front_right" coef="0.5" />
+            <joint joint="back_left" coef="0.5" />
+            <joint joint="back_right" coef="0.5" />
         </fixed>
         <fixed name="turn">
-            <joint joint="front_left" coef="-5" />
-            <joint joint="front_right" coef="5" />
-            <joint joint="back_left" coef="-5" />
-            <joint joint="back_right" coef="5" />
+            <joint joint="front_left" coef="-2" />
+            <joint joint="front_right" coef="2" />
+            <joint joint="back_left" coef="-2" />
+            <joint joint="back_right" coef="2" />
         </fixed>
     </tendon>
     <actuator>

@@ -19,8 +19,8 @@ BATCH_SIZE = 256
 REPLAY_SIZE = int(1e6)
 MAX_EPISODES = 10000
 MAX_STEPS = 1000
-RSP = -10
-# RSP = 0
+# RSP = -10
+RSP=-5
 
 # Load environment and collision model
 env = CarEnv()
@@ -72,20 +72,22 @@ def compute_actor_loss(state):
     q = torch.min(q1, q2)
     return (ALPHA * log_prob - q).mean()
 
-def compute_reward(state, next_state, risk, env, log_reward=False):
+def compute_reward(state, next_state, risk, env, speed, log_reward=False):
     rel_pos = state[-2:]
     next_rel_pos = next_state[-2:]
     prev_dist = np.linalg.norm(rel_pos)
     curr_dist = np.linalg.norm(next_rel_pos)
 
-    progress = prev_dist - curr_dist
-    arrive_bonus = 10 if curr_dist < 0.3 else 0.0
+    progress = (prev_dist - curr_dist) * 40
+    arrive_bonus = 50 if curr_dist < 0.5 else 0.0
     crash_penalty = -10.0 if env.collided() else 0.0
+    speed_penalty = min(0, 0.8-speed) * 2
 
-    reward = progress + arrive_bonus + crash_penalty + RSP * risk
+    # reward = progress * 10 + arrive_bonus + crash_penalty + RSP * risk
+    reward = progress + arrive_bonus + crash_penalty + RSP * risk + speed_penalty
 
     if log_reward:
-        print(f"reward={reward:.2f} (progress={progress:.2f}, arrive={arrive_bonus:.2f}, crash={crash_penalty:.2f}, risk={risk:.2f}, RSP*risk={RSP*risk:.4f})")
+        print(f"reward={reward:.2f} (progress={progress:.2f}, arrive={arrive_bonus:.2f}, crash={crash_penalty:.2f}, risk={risk:.2f}, RSP*risk={RSP*risk:.4f}, speed_penalty={speed_penalty})")
         time.sleep(0.1)
     return reward
 
@@ -95,13 +97,13 @@ total_episode_return = 0
 pretrain_steps = 0
 for ep in range(MAX_EPISODES):
     ### 
-    # if ep % 100 == 0:
-    #     env.launch_viewer()
-    # if ep % 100 == 1:
-    #     env.close_viewer()
+    if ep % 200 == 0:
+        env.launch_viewer()
+    if ep % 200 == 1:
+        env.close_viewer()
     ###
 
-    env.reset(easy_mode=True) ###
+    env.reset(easy_mode=False) ###
     state = env.get_observation()
     episode_reward = 0
 
@@ -125,8 +127,9 @@ for ep in range(MAX_EPISODES):
             logits = f_phi(torch.FloatTensor(obs).unsqueeze(0))
             risk = torch.sigmoid(logits).item()
 
-        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, log_reward=ep%100==0 and step%3==0) ###
-        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env)
+        speed = np.linalg.norm(next_state[-4:-2])
+        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
+        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env)
         replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
         total_episode_return += reward
@@ -162,8 +165,8 @@ for ep in range(MAX_EPISODES):
             for target_param, param in zip(target_critic2.parameters(), critic2.parameters()):
                 target_param.data.copy_(TAU * param.data + (1.0 - TAU) * target_param.data)
 
-    if ep > 0 and ep % 100 == 0:
-        print(f"[Episode {ep}] Avg Return Over 100 Ep: {total_episode_return / 100:.2f}")
+    if ep > 0 and ep % 200 == 0:
+        print(f"[Episode {ep}] Avg Return Over 200 Ep: {total_episode_return / 200:.2f}")
         total_episode_return = 0
 
 # Save model
