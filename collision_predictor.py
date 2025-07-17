@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import recall_score, f1_score
+import matplotlib.pyplot as plt
 
 def load_data():  
     X = np.load("data/X.npy")
@@ -35,7 +36,14 @@ class CollisionPredictor(nn.Module):
         return self.mlp(x)
 
 def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, patience=5):
-    # Evaluate before training 
+    history = {
+        "train_loss": [],
+        "val_loss": [],
+        "recall": [],
+        "f1": []
+    }
+
+    # Initial evaluation
     model.eval()
     val_loss = 0
     y_true, y_pred = [], []
@@ -52,12 +60,13 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, 
     f1 = f1_score(y_true, y_pred)
     print(f"[Before Training] Val Loss: {avg_val_loss:.4f} | Recall: {recall:.4f} | F1: {f1:.4f}")
 
-    # Start training 
     best_loss = float("inf")
     best_recall = -1
     best_f1 = -1
     counter = 0
+
     for epoch in range(num_epochs):
+        # Train
         model.train()
         train_loss = 0
         for xb, yb in train_loader:
@@ -69,7 +78,7 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, 
             train_loss += loss.item() * xb.size(0)
         avg_train_loss = train_loss / len(train_loader.dataset)
 
-        # Validation
+        # Validate
         model.eval()
         val_loss = 0
         y_true, y_pred = [], []
@@ -84,6 +93,12 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, 
         avg_val_loss = val_loss / len(val_loader.dataset)
         recall = recall_score(y_true, y_pred)
         f1 = f1_score(y_true, y_pred)
+
+        # Record history
+        history["train_loss"].append(avg_train_loss)
+        history["val_loss"].append(avg_val_loss)
+        history["recall"].append(recall)
+        history["f1"].append(f1)
 
         print(f"Epoch {epoch+1:02d} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | Recall: {recall:.4f} | F1: {f1:.4f}")
 
@@ -100,6 +115,29 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs=30, 
                 break
 
     print(f"Best Val Loss: {best_loss:.4f} | Best Recall: {best_recall:.4f} | Best F1: {best_f1:.4f}")
+
+    # --- Plot training curves ---
+    epochs = range(1, len(history["train_loss"]) + 1)
+
+    plt.figure()
+    plt.plot(epochs, history["train_loss"], label="Train Loss")
+    plt.plot(epochs, history["val_loss"], label="Val Loss")
+    plt.title("Loss vs. Epoch")
+    plt.xlabel("Epoch")
+    plt.ylabel("BCE Loss")
+    plt.legend()
+    plt.savefig("graph/loss_curve.png")
+    plt.close()
+
+    plt.figure()
+    plt.plot(epochs, history["recall"], label="Recall")
+    plt.plot(epochs, history["f1"], label="F1 Score")
+    plt.title("Recall & F1 vs. Epoch")
+    plt.xlabel("Epoch")
+    plt.ylabel("Score")
+    plt.legend()
+    plt.savefig("graph/recall_f1_curve.png")
+    plt.close()
 
 
 def main():
