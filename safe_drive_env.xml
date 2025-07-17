@@ -80,10 +80,10 @@
     </worldbody>
     <tendon>
         <fixed name="forward">
-            <joint joint="front_left" coef="0.5" />
-            <joint joint="front_right" coef="0.5" />
-            <joint joint="back_left" coef="0.5" />
-            <joint joint="back_right" coef="0.5" />
+            <joint joint="front_left" coef="2" />
+            <joint joint="front_right" coef="2" />
+            <joint joint="back_left" coef="2" />
+            <joint joint="back_right" coef="2" />
         </fixed>
         <fixed name="turn">
             <joint joint="front_left" coef="-2" />

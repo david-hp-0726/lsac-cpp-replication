@@ -10,7 +10,6 @@ class DataCollector:
         self.buffer = []
     
     def run_episode(self, max_steps=1000):
-        # self.env.reset()
         obs_buffer = []
         labels = []
         sampler = ActionSampler()
@@ -24,10 +23,10 @@ class DataCollector:
             obs_buffer.append(obs)
             labels.append(0)
 
-            if i == 0:
-                obs_buffer[0] = np.concatenate([obs_buffer[0], [0, 0]])
-            else:
-                obs_buffer[i] = np.concatenate([obs_buffer[i], obs_buffer[i-1][-4:-2]]) # extend with previous action
+            # if i == 0:
+            #     obs_buffer[0] = np.concatenate([obs_buffer[0], [0, 0]])
+            # else:
+            #     obs_buffer[i] = np.concatenate([obs_buffer[i], obs_buffer[i-1][-4:-2]]) # extend with previous action
 
             
             if self.env.collided():

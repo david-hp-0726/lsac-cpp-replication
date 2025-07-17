@@ -18,7 +18,8 @@ def simulate(log_prob=False):
     car_env = CarEnv()
     sampler = ActionSampler()
     car_env.launch_viewer()
-    car_env.randomize_boxes()  
+    car_env.reset()  
+    time.sleep(10)
 
     if log_prob:
         model = CollisionPredictor()

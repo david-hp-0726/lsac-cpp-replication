@@ -14,7 +14,7 @@ GAMMA = 0.99
 TAU = 0.005
 ACTOR_LR = 1e-4
 CRITIC_LR = 2e-4
-ALPHA = 0.05
+ALPHA = 0.3
 BATCH_SIZE = 256
 REPLAY_SIZE = int(1e6)
 MAX_EPISODES = 10000
@@ -78,7 +78,8 @@ def compute_reward(state, next_state, risk, env, speed, log_reward=False):
     progress = (prev_dist - curr_dist) * 20
     arrive_bonus = 50 if curr_dist < 0.5 else 0.0
     crash_penalty = -10.0 if env.collided() else 0.0
-    speed_penalty = min(0, 0.8-speed) * 2
+    # speed_penalty = min(0, 0.8-speed) * 2
+    speed_penalty = 0
 
     # reward = progress * 10 + arrive_bonus + crash_penalty + RSP * risk
     reward = progress + arrive_bonus + crash_penalty + RSP * risk + speed_penalty
@@ -94,17 +95,20 @@ total_episode_return = 0
 pretrain_steps = 0
 for ep in range(MAX_EPISODES):
     ### 
-    # if ep % 200 == 0:
-    #     env.launch_viewer()
-    # if ep % 200 == 1:
-    #     env.close_viewer()
+    if ep % 200 == 0:
+        env.launch_viewer()
+    if ep % 200 == 1:
+        env.close_viewer()
     ###
-
     env.reset(easy_mode=False) ###
     state = env.get_state()
     episode_reward = 0
 
     action_sampler = ActionSampler(turn_momentum=0.5, drift_strength=0.2) ###
+
+    if ep > 0 and ep <= 500 and ep % 100 == 0:
+        ALPHA -= 0.05
+        print(f"[Episode {ep}]: alpha={ALPHA}")
 
     for step in range(MAX_STEPS):
         if pretrain_steps > 0:
@@ -125,8 +129,8 @@ for ep in range(MAX_EPISODES):
             risk = torch.sigmoid(logits).item()
 
         speed = np.abs(next_state[-4])
-        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
-        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed)
+        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
+        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed)
         replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
         total_episode_return += reward
