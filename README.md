@@ -35,10 +35,12 @@ The model is trained for **up to 30 epochs** using the Adam optimizer and **earl
 ### Loss Curve
 
 The following plot shows training and validation binary cross-entropy loss over epochs:
+![Loss Curve](graph/loss.png)
 
 ### Recall and F1 Score
 
 Validation recall and F1 score over epochs:
+![Recall and F1](graph/recall_f1.png)
 
 - **Recall** reflects how consistently the model identifies dangerous states.
 - **F1 Score** captures how well it balances false positives and false negatives.
