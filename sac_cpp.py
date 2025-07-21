@@ -12,15 +12,17 @@ from action_sampler import ActionSampler
 # Hyperparameters
 GAMMA = 0.99
 TAU = 0.005
-ACTOR_LR = 1e-4
-CRITIC_LR = 2e-4
+# ACTOR_LR = 1e-4
+# CRITIC_LR = 2e-4
+ACTOR_LR = 5e-4
+CRITIC_LR = 10e-4
 ALPHA = 0.3
 BATCH_SIZE = 256
 REPLAY_SIZE = int(1e6)
 MAX_EPISODES = 10000
 MAX_STEPS = 1000
 # RSP = -10
-RSP=-5
+RSP=-2
 
 # Load environment and collision model
 env = CarEnv()
@@ -75,17 +77,15 @@ def compute_reward(state, next_state, risk, env, speed, log_reward=False):
     prev_dist = np.linalg.norm(rel_pos)
     curr_dist = np.linalg.norm(next_rel_pos)
 
-    progress = (prev_dist - curr_dist) * 20
+    progress = (prev_dist - curr_dist) * 50
     arrive_bonus = 50 if curr_dist < 0.5 else 0.0
-    crash_penalty = -10.0 if env.collided() else 0.0
-    # speed_penalty = min(0, 0.8-speed) * 2
-    speed_penalty = 0
+    crash_penalty = -50.0 if env.collided() else 0.0
 
-    # reward = progress * 10 + arrive_bonus + crash_penalty + RSP * risk
-    reward = progress + arrive_bonus + crash_penalty + RSP * risk + speed_penalty
+    reward = progress + arrive_bonus + crash_penalty + RSP * risk
+    # reward = progress * 10 + crash_penalty
 
     if log_reward:
-        print(f"reward={reward:.2f} (progress={progress:.2f}, arrive={arrive_bonus:.2f}, crash={crash_penalty:.2f}, risk={risk:.2f}, RSP*risk={RSP*risk:.4f}, speed_penalty={speed_penalty})")
+        print(f"reward={reward:.2f} (progress={progress:.2f}, arrive={arrive_bonus:.2f}, crash={crash_penalty:.2f}, risk={risk:.2f}, RSP*risk={RSP*risk:.4f})")
         time.sleep(0.1)
     return reward
 
@@ -95,10 +95,10 @@ total_episode_return = 0
 pretrain_steps = 0
 for ep in range(MAX_EPISODES):
     ### 
-    if ep % 200 == 0:
-        env.launch_viewer()
-    if ep % 200 == 1:
-        env.close_viewer()
+    # if ep % 200 == 0:
+    #     env.launch_viewer()
+    # if ep % 200 == 1:
+    #     env.close_viewer()
     ###
     env.reset(easy_mode=False) ###
     state = env.get_state()
@@ -129,8 +129,8 @@ for ep in range(MAX_EPISODES):
             risk = torch.sigmoid(logits).item()
 
         speed = np.abs(next_state[-4])
-        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
-        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed)
+        # reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed, log_reward=ep%200==0 and step%3==0) ###
+        reward = 0 if step == 0 else compute_reward(state, next_state, risk, env, speed)
         replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
         total_episode_return += reward
@@ -167,7 +167,7 @@ for ep in range(MAX_EPISODES):
                 target_param.data.copy_(TAU * param.data + (1.0 - TAU) * target_param.data)
 
     if ep > 0 and ep % 200 == 0:
-        print(f"[Episode {ep}] Avg Return Over 200 Ep: {total_episode_return / 200:.2f}")
+        print(f"[Episode {ep}] Avg Return = {total_episode_return / 200:.2f}")
         total_episode_return = 0
 
 # Save model

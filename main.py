@@ -7,6 +7,7 @@ from car_env import CarEnv
 from action_sampler import ActionSampler
 from collision_predictor import CollisionPredictor
 import torch
+import os
 
 model = mujoco.MjModel.from_xml_path('safe_drive_env.xml')
 data = mujoco.MjData(model)
