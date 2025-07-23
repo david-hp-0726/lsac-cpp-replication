@@ -53,3 +53,21 @@ Validation recall and F1 score over epochs:
 - **Best Validation Loss**: 0.0835  
 - **Best Recall**: 0.9979  
 - **Best F1 Score**: 0.4935  
+
+## Challenges
+
+After numerous attempts, I was ultimately unable to replicate the sac-cpp algorithm due to the following challenges. 
+
+### Difference in Simulation Environment
+I used a customized MuJoCo simulation environment with key differences from the original setup:
+
+- In my environment, actions are low-level control signals passed directly to the wheel actuators.
+- The original paper defines actions as high-level motion commands: linear and angular velocities.
+- This difference makes turning behavior harder to learn, especially given the simplified dynamics of my vehicle model. Also, my car model exhibits slightly awkward turning dynamics.
+
+### Reward Function
+Designing a reward that balances goal-reaching and obstacle avoidance turned out to be difficult. The agent learns simple behaviors but never learns complex obstacle avoidance behaviors.
+- Reward functions that prioritize progress encourages the agent to rush to the target even if it means bumping into obstacles. 
+- Risk averse rewards caused the agent to avoid obstacles excessively, even retreating from the goal and backing into walls.
+- These issues illustrate the limitations of hand-crafted rewards in safety-critical settings and highlight the importance of learning reward functions or incorporating formal safety constraints.
+
