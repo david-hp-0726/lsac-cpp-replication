@@ -63,7 +63,7 @@ I used a customized MuJoCo simulation environment with key differences from the 
 
 - In my environment, actions are low-level control signals passed directly to the wheel actuators.
 - The original paper defines actions as high-level motion commands: linear and angular velocities.
-- This difference makes turning behavior harder to learn, especially given the simplified dynamics of my vehicle model. Also, my car model exhibits slightly awkward turning dynamics.
+- This difference makes turning behavior harder to learn, especially given the simplified dynamics of my vehicle model. Also, my car model is slightly awkward to control (it's either accelerating or decelerating and rarely keeping a steady speed).
 
 ### Reward Function
 Designing a reward that balances goal-reaching and obstacle avoidance turned out to be difficult. The agent learns simple behaviors but never learns complex obstacle avoidance behaviors.
