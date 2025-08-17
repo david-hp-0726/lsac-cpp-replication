@@ -56,7 +56,7 @@ Validation recall and F1 score over epochs:
 
 ## Challenges
 
-After numerous attempts, I was ultimately unable to replicate the sac-cpp algorithm due to the following challenges. 
+After numerous attempts, I was ultimately unable to reproduce a sac-cpp agent with acceptable performance. I've analyzed the failure modes below.
 
 ### Difference in Simulation Environment
 I used a customized MuJoCo simulation environment with key differences from the original setup:
